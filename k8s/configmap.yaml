@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: order-app-config
+  namespace: default
+  labels:
+    app: order-management
+data:
+  DB_URL: "jdbc:mysql://order-db-service:3306/order_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+  SPRING_PROFILES_ACTIVE: "prod"
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info,metrics,prometheus"

@@ -1,0 +1,49 @@
+version: "3.9"
+
+services:
+  order-db:
+    image: mysql:8.0
+    container_name: order-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-order_db}
+      MYSQL_USER: ${MYSQL_USER:-order_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-order_pass}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_pass}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root_pass}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - order-net
+
+  order-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: order-app
+    restart: unless-stopped
+    depends_on:
+      order-db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://order-db:3306/${MYSQL_DATABASE:-order_db}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USERNAME: ${MYSQL_USER:-order_user}
+      DB_PASSWORD: ${MYSQL_PASSWORD:-order_pass}
+    ports:
+      - "8080:8080"
+    networks:
+      - order-net
+
+volumes:
+  mysql-data:
+    driver: local
+
+networks:
+  order-net:
+    driver: bridge
