@@ -10,8 +10,8 @@ pipeline {
         APP_NAME        = 'order-management'
         IMAGE_NAME      = "${APP_NAME}:${BUILD_NUMBER}"
         IMAGE_LATEST    = "${APP_NAME}:latest"
-        HEALTH_URL      = 'http://localhost:8080/actuator/health'
-        GIT_REPO_URL    = 'https://github.com/your-org/order-management-devops-demo.git'
+        HEALTH_URL = 'http://localhost:8081/actuator/health'
+        GIT_REPO_URL = 'https://github.com/akshuk92/order-management.git'
         GIT_BRANCH      = 'main'
     }
 
